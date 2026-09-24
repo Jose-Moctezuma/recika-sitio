@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReciKa · Chetumal recicla, todos ganamos</title>
+<meta name="description" content="App gratuita para Chetumal: clasifica tus residuos conforme a la LGPGIR, encuentra centros de acopio, consulta rutas de recolección y reporta tiraderos clandestinos.">
+<meta name="theme-color" content="#085041">
+<meta property="og:title" content="ReciKa · Chetumal recicla, todos ganamos">
+<meta property="og:description" content="App gratuita de gestión de residuos para Chetumal, Q. Roo.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+  /* ============================================================
+     CONFIGURACIÓN — lo único que se edita en cada versión nueva
+     ============================================================ */
+  window.RECIKA = {
+    // URL fija del APK (GitHub Releases). Déjala en null mientras no exista el primer build:
+    // el botón mostrará "Disponible muy pronto" y el QR no se genera.
+    apkUrl: null, // ej. "https://github.com/USUARIO/recika-descargas/releases/latest/download/recika.apk"
+    version: null,        // ej. "1.0.0"
+    tamanoMB: null,       // ej. 58
+    androidMinimo: null,  // ej. "7.0"
+    avisoPrivacidadUrl: null, // ej. "/aviso-privacidad.html"
+    correoContacto: null      // ej. "recika.proyecto@gmail.com"
+  };
+</script>
+<style>
+  :root{
+    --verde-manglar:#085041; --verde-selva:#1D9E75; --turquesa:#9FE1CB; --verde-palido:#E1F5EE;
+    --ambar:#BA7517; --ambar-texto:#8A5510; --rojo:#C53B3A;
+    --tinta:#0B2E26; --texto:#1F2A26; --texto-2:#3F4A45; --texto-3:#5F5E58;
+    --surface:#FFFFFF; --surface2:#F7F6F2; --border:#E0DED7;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--surface2);color:var(--texto);-webkit-font-smoothing:antialiased}
+  a{color:var(--verde-manglar)} a:hover{color:var(--verde-selva)}
+  img,svg{display:block}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+  .eyebrow{font-size:13px;font-weight:700;color:var(--verde-selva);letter-spacing:1px;text-transform:uppercase;margin:0}
+  h1,h2,h3{margin:0;color:var(--tinta)}
+  h2{font-size:clamp(28px,4vw,44px);line-height:1.1;font-weight:800;letter-spacing:-1px}
+  p{margin:0}
+  .skip{position:absolute;left:-999px;top:8px;background:var(--verde-manglar);color:#fff;padding:10px 14px;border-radius:8px;z-index:10}
+  .skip:focus{left:8px}
+  :focus-visible{outline:3px solid var(--verde-selva);outline-offset:3px;border-radius:6px}
+
+  /* Encabezado */
+  header{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+  header .wrap{height:68px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .marca{display:flex;align-items:center;gap:10px;text-decoration:none}
+  .isotipo{width:40px;height:40px;border-radius:11px;background:var(--verde-manglar);color:var(--turquesa);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+  .logotipo{font-size:24px;color:var(--verde-manglar);letter-spacing:-.5px}
+  .logotipo b{font-weight:700} .logotipo span{font-weight:300}
+  nav ul{list-style:none;margin:0;padding:0;display:flex;align-items:center;gap:28px;font-size:15px;font-weight:500}
+  nav a{text-decoration:none;color:var(--texto);padding:12px 0}
+  nav .pill{background:var(--verde-manglar);color:#fff;padding:11px 20px;border-radius:999px;font-weight:600}
+  nav .pill:hover{color:#fff;background:#0B3F34}
+  .solo-escritorio{display:none}
+
+  /* Portada */
+  .hero{background:var(--surface);padding:40px 0 48px}
+  .hero .wrap{display:grid;gap:40px;align-items:center}
+  .hero-texto{display:flex;flex-direction:column;gap:20px}
+  .chip{align-self:flex-start;background:var(--verde-palido);color:var(--verde-manglar);font-size:13px;font-weight:600;padding:7px 12px;border-radius:999px}
+  .hero h1{font-size:clamp(40px,6vw,64px);line-height:1.04;font-weight:800;letter-spacing:-1.5px}
+  .hero p.lead{font-size:clamp(17px,1.6vw,20px);line-height:1.55;color:var(--texto-2)}
+  .descarga{display:flex;flex-wrap:wrap;align-items:center;gap:24px;padding-top:6px}
+  .btn-descarga{display:flex;align-items:center;justify-content:center;gap:12px;background:var(--verde-manglar);color:#fff;text-decoration:none;padding:16px 26px;border-radius:16px;min-height:56px;flex:1 1 260px;max-width:360px}
+  .btn-descarga:hover{background:#0B3F34;color:#fff}
+  .btn-descarga .t1{font-size:18px;font-weight:700;display:block}
+  .btn-descarga .t2{font-size:13px;color:var(--turquesa);display:block;margin-top:2px}
+  .btn-descarga[aria-disabled="true"]{background:#7C8C86;cursor:not-allowed}
+  .btn-descarga[aria-disabled="true"] .t2{color:#E6ECE9}
+  .qr-bloque{display:none;align-items:center;gap:14px}
+  .qr{width:112px;height:112px;padding:8px;background:#fff;border:1px solid var(--border);border-radius:12px}
+  .qr img,.qr canvas{width:100%!important;height:100%!important}
+  .qr-bloque p{font-size:14px;line-height:1.45;color:var(--texto-3);max-width:150px}
+  .requisitos{font-size:14px;line-height:1.45;color:var(--texto-3)}
+
+  /* Teléfono con el clasificador */
+  .telefono{justify-self:center;width:280px;height:560px;border-radius:42px;background:var(--tinta);padding:12px;box-shadow:0 28px 56px rgba(8,80,65,.18)}
+  .pantalla{width:100%;height:100%;border-radius:31px;background:var(--surface2);overflow:hidden;display:flex;flex-direction:column}
+  .pantalla .barra{padding:30px 16px 12px;background:#fff;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+  .pantalla .titulo{font-size:17px;font-weight:700}
+  .pasos{display:flex;gap:5px}.pasos i{flex:1;height:4px;border-radius:4px;background:var(--border)}.pasos i:first-child{background:var(--verde-manglar)}
+  .pantalla .cuerpo{padding:12px;display:flex;flex-direction:column;gap:10px}
+  .aviso-ley{background:var(--verde-palido);border:1px solid var(--turquesa);border-radius:10px;padding:8px 10px;font-size:10.5px;color:var(--verde-manglar);font-weight:600}
+  .cat{background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;gap:10px;align-items:center}
+  .cat .ico{width:32px;height:32px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+  .cat .ico i{width:11px;height:11px;border-radius:3px}
+  .cat b{display:block;font-size:12px;font-weight:600}
+  .cat small{display:block;font-size:9.5px;color:var(--texto-3);margin-top:2px}
+  .ayuda{margin-top:4px;border:1.5px solid var(--verde-manglar);border-radius:12px;padding:10px;text-align:center;font-size:11.5px;font-weight:600;color:var(--verde-manglar)}
+
+  /* Secciones */
+  section.bloque{padding:56px 0}
+  .encabezado{display:flex;flex-direction:column;gap:12px;max-width:720px;margin-bottom:32px}
+  .tarjetas{display:grid;gap:16px}
+  .tarjeta{background:#fff;border:1px solid var(--border);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:12px}
+  .tarjeta .ico{width:48px;height:48px;border-radius:13px;background:var(--verde-palido);color:var(--verde-manglar);display:flex;align-items:center;justify-content:center}
+  .tarjeta .ico.ambar{background:#F8EEDF;color:var(--ambar-texto)}
+  .tarjeta h3{font-size:20px;font-weight:700}
+  .tarjeta p{font-size:16px;line-height:1.55;color:var(--texto-2)}
+  .tarjeta.oscura{background:var(--verde-manglar);border-color:var(--verde-manglar);justify-content:space-between}
+  .tarjeta.oscura h3{color:#fff;font-size:24px;line-height:1.25}
+  .tarjeta.oscura p{color:var(--verde-palido)}
+  .tarjeta.oscura a{align-self:flex-start;background:var(--turquesa);color:var(--tinta);text-decoration:none;font-weight:700;padding:12px 22px;border-radius:999px}
+
+  .instalar{background:#fff}
+  .instalar .wrap{display:grid;gap:32px}
+  .instalar .intro p{font-size:17px;line-height:1.55;color:var(--texto-2);margin-top:14px}
+  ol.lista-pasos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+  ol.lista-pasos li{display:flex;gap:16px;padding:20px;border:1px solid var(--border);border-radius:18px;background:var(--surface2)}
+  .num{width:40px;height:40px;flex-shrink:0;border-radius:999px;background:var(--verde-manglar);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+  ol.lista-pasos b{display:block;font-size:18px;margin-bottom:4px}
+  ol.lista-pasos span{font-size:16px;line-height:1.5;color:var(--texto-2)}
+
+  .privacidad{background:var(--verde-palido);border:1px solid var(--turquesa);border-radius:24px;padding:28px;display:grid;gap:24px}
+  .privacidad h2{font-size:28px}
+  .privacidad .items{display:grid;gap:20px}
+  .privacidad b{display:block;font-size:17px;margin-bottom:6px}
+  .privacidad .items span{font-size:15px;line-height:1.5;color:#2F3A36}
+  .privacidad a{font-weight:600}
+
+  .proyecto .wrap{display:grid;gap:32px;align-items:start}
+  .proyecto h2{font-size:clamp(24px,3vw,36px);line-height:1.15;margin-top:12px}
+  .proyecto p{font-size:17px;line-height:1.6;color:var(--texto-2);margin-top:14px}
+  .autores{background:#fff;border:1px solid var(--border);border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:12px}
+  .autores .eyebrow{color:var(--texto-3)}
+  .autores div{font-size:17px;font-weight:600}
+  .autores small{font-size:15px;line-height:1.5;color:var(--texto-3);border-top:1px solid var(--border);padding-top:14px;margin-top:4px}
+
+  footer{background:var(--tinta);color:var(--verde-palido);padding:32px 0}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center;justify-content:space-between;font-size:15px}
+  footer .logotipo{color:#fff;font-size:22px}
+  footer .lema{color:var(--turquesa)}
+  footer a{color:var(--verde-palido);padding:10px 0;display:inline-block}
+  footer .enlaces{display:flex;gap:24px;align-items:center}
+
+  @media (min-width:900px){
+    .solo-escritorio{display:list-item}
+    .hero{padding:80px 0 88px}
+    .hero .wrap{grid-template-columns:minmax(0,1fr) 320px;gap:72px}
+    .telefono{width:320px;height:640px}
+    .qr-bloque.activo{display:flex}
+    section.bloque{padding:88px 0}
+    .tarjetas{grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+    .tarjeta{padding:32px}
+    .instalar .wrap{grid-template-columns:360px minmax(0,1fr);gap:72px}
+    .privacidad{grid-template-columns:260px minmax(0,1fr);padding:40px 48px;gap:48px}
+    .privacidad .items{grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+    .proyecto .wrap{grid-template-columns:minmax(0,1fr) 400px;gap:72px}
+  }
+  @media (min-width:600px) and (max-width:899px){
+    .tarjetas{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#principal">Saltar al contenido</a>
+
+<header>
+  <div class="wrap">
+    <a class="marca" href="#inicio" aria-label="ReciKa, inicio">
+      <!-- Reemplazar por el isotipo del quetzal: <img src="isotipo.svg" alt="" width="40" height="40"> -->
+      <div class="isotipo" aria-hidden="true">RK</div>
+      <div class="logotipo"><b>Reci</b><span>Ka</span></div>
+    </a>
+    <nav aria-label="Principal">
+      <ul>
+        <li class="solo-escritorio"><a href="#funciones">Qué hace</a></li>
+        <li><a href="#instalar">Cómo instalar</a></li>
+        <li class="solo-escritorio"><a href="#proyecto">El proyecto</a></li>
+        <li class="solo-escritorio"><a class="pill" href="#inicio">Descargar</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="principal">
+  <section class="hero" id="inicio">
+    <div class="wrap">
+      <div class="hero-texto">
+        <div class="chip">App gratuita para Chetumal, Q. Roo</div>
+        <h1>Chetumal recicla, todos ganamos</h1>
+        <p class="lead">Aprende a separar tus residuos según la ley, encuentra el centro de acopio más cercano, consulta cuándo pasa el camión por tu colonia y reporta tiraderos clandestinos. Sin registro: abres la app y ya puedes usarla.</p>
+        <div class="descarga">
+          <a class="btn-descarga" id="btnDescarga" href="#instalar" aria-disabled="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+            <span><span class="t1" id="btnT1">Disponible muy pronto</span><span class="t2" id="btnT2">Versión para Android</span></span>
+          </a>
+          <div class="qr-bloque" id="qrBloque">
+            <div class="qr" id="qr" role="img" aria-label="Código QR para descargar ReciKa"></div>
+            <p>Escanéalo desde tu teléfono Android</p>
+          </div>
+        </div>
+        <p class="requisitos" id="requisitos">Por ahora solo para Android. Aún no está disponible para iPhone.</p>
+      </div>
+
+      <div class="telefono" aria-hidden="true">
+        <div class="pantalla">
+          <div class="barra">
+            <div class="titulo">Clasificar residuo</div>
+            <div class="pasos"><i></i><i></i><i></i></div>
+          </div>
+          <div class="cuerpo">
+            <div class="aviso-ley">Clasificación conforme a la LGPGIR · Arts. 16, 18 y 19</div>
+            <div class="cat"><div class="ico" style="background:#E1F5EE"><i style="background:#085041"></i></div><div><b>Residuo Sólido Urbano (RSU)</b><small>Hogar, comercio o vía pública · Art. 18</small></div></div>
+            <div class="cat"><div class="ico" style="background:#F8EEDF"><i style="background:#BA7517"></i></div><div><b>Manejo Especial (RME)</b><small>Procesos productivos · Art. 19</small></div></div>
+            <div class="cat"><div class="ico" style="background:#FCE5E4"><i style="background:#C53B3A"></i></div><div><b>Residuo Peligroso (RP)</b><small>Características CRETIB · Art. 16</small></div></div>
+            <div class="ayuda">Ayudarme a identificarlo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque" id="funciones">
+    <div class="wrap">
+      <div class="encabezado">
+        <p class="eyebrow">Qué puedes hacer</p>
+        <h2>Cinco herramientas para manejar mejor tus residuos</h2>
+      </div>
+      <div class="tarjetas">
+        <article class="tarjeta">
+          <div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/><path d="M10 11v5"/><path d="M14 11v5"/></svg></div>
+          <h3>Clasifica tu residuo</h3>
+          <p>Descubre si es urbano, de manejo especial o peligroso, quién es la autoridad responsable y qué hacer con él, conforme a la LGPGIR. Funciona sin internet.</p>
+        </article>
+        <article class="tarjeta">
+          <div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></div>
+          <h3>Centros de acopio</h3>
+          <p>Mapa de puntos de reciclaje en Chetumal con la distancia desde donde estás y filtros por material: cartón, electrónicos, metal y más.</p>
+        </article>
+        <article class="tarjeta">
+          <div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg></div>
+          <h3>Rutas de recolección</h3>
+          <p>Elige tu colonia una vez y consulta qué días y en qué horario pasa el camión. Puedes activar un recordatorio la noche anterior.</p>
+        </article>
+        <article class="tarjeta">
+          <div class="ico ambar"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v5"/><path d="M12 18h.01"/></svg></div>
+          <h3>Reporta tiraderos</h3>
+          <p>Documenta un tiradero clandestino con foto y ubicación, o descríbelo desde casa. Los reportes forman un mapa comunitario de tu ciudad.</p>
+        </article>
+        <article class="tarjeta">
+          <div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2z"/><path d="M22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/></svg></div>
+          <h3>Aprende</h3>
+          <p>Lecciones breves sobre separación, reciclaje y residuos peligrosos en el hogar. Marca las que terminas y sigue tu avance.</p>
+        </article>
+        <article class="tarjeta oscura">
+          <h3>Sin cuentas ni contraseñas</h3>
+          <p>No te pedimos nombre, correo ni teléfono. La app funciona desde el primer momento.</p>
+          <a href="#inicio">Descargar ReciKa</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque instalar" id="instalar">
+    <div class="wrap">
+      <div class="intro">
+        <p class="eyebrow">Cómo instalar</p>
+        <h2 style="margin-top:12px">Cuatro pasos, unos dos minutos</h2>
+        <p>ReciKa todavía no está en Google Play: se instala directamente desde este sitio. Es normal que tu teléfono te pida confirmar.</p>
+      </div>
+      <ol class="lista-pasos">
+        <li><div class="num">1</div><div><b>Descarga el archivo</b><span>Toca "Descargar para Android" o escanea el código QR. Se guarda un archivo llamado recika.apk.</span></div></li>
+        <li><div class="num">2</div><div><b>Permite la instalación</b><span>Abre el archivo. Si Android lo pide, entra a Ajustes y activa "Permitir de esta fuente" para tu navegador.</span></div></li>
+        <li><div class="num">3</div><div><b>Confirma el aviso de Play Protect</b><span>Como la app no viene de la tienda, Google puede mostrar "App no reconocida". Elige "Más detalles" y luego "Instalar de todos modos".</span></div></li>
+        <li><div class="num">4</div><div><b>Abre ReciKa y elige tu colonia</b><span>No necesitas registrarte. Para actualizar a una versión nueva, repite estos pasos: tus datos se conservan.</span></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="bloque" id="privacidad" style="padding-bottom:24px">
+    <div class="wrap">
+      <div class="privacidad">
+        <div>
+          <h2>Tus datos</h2>
+          <p style="margin-top:12px" id="avisoEnlace" hidden><a href="#">Leer el aviso de privacidad completo</a></p>
+        </div>
+        <div class="items">
+          <div><b>Sin identificarte</b><span>La app te asigna un identificador anónimo. No pedimos nombre, correo ni teléfono.</span></div>
+          <div><b>Ubicación y fotos</b><span>ReciKa solo las guarda cuando envías un reporte. La distancia a los centros de acopio se calcula en tu teléfono.</span></div>
+          <div><b>Uso académico</b><span>La información se usa en una investigación sobre participación ciudadana y residuos urbanos.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque proyecto" id="proyecto">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">El proyecto</p>
+        <h2>Tecnologías móviles y participación ciudadana para la gestión de residuos sólidos urbanos</h2>
+        <p>ReciKa nace de una investigación aplicada en Chetumal. Su nombre une "Reci", de reciclar, con "Ka", partícula maya de continuidad. Los resultados se presentarán en el 6° Congreso Internacional de Estudios sobre la Ciudad, del 12 al 16 de octubre de 2026.</p>
+      </div>
+      <div class="autores">
+        <p class="eyebrow">Investigadores</p>
+        <div>Dr. José Luis Moctezuma Tejeda</div>
+        <div>Mtra. Laura Isabel Guarneros Urbina</div>
+        <div>Dr. Jorge Manuel Tello Chan</div>
+        <small>Investigadores del Instituto Tecnológico de Chetumal</small>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div style="display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline">
+      <div class="logotipo"><b>Reci</b><span>Ka</span></div>
+      <div class="lema">Chetumal recicla, todos ganamos</div>
+    </div>
+    <div class="enlaces">
+      <a href="#" id="pieAviso" hidden>Aviso de privacidad</a>
+      <a href="#" id="pieContacto" hidden>Contacto</a>
+      <span style="color:var(--turquesa)">© 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function () {
+  var c = window.RECIKA || {};
+  var btn = document.getElementById('btnDescarga');
+
+  if (c.apkUrl) {
+    btn.href = c.apkUrl;
+    btn.removeAttribute('aria-disabled');
+    btn.setAttribute('download', 'recika.apk');
+    document.getElementById('btnT1').textContent = 'Descargar para Android';
+    var detalle = ['APK'];
+    if (c.version) detalle.push('v' + c.version);
+    if (c.tamanoMB) detalle.push(c.tamanoMB + ' MB');
+    document.getElementById('btnT2').textContent = detalle.join(' · ');
+
+    if (window.QRCode) {
+      try {
+        new QRCode(document.getElementById('qr'), {
+          text: c.apkUrl, width: 192, height: 192,
+          colorDark: '#0B2E26', colorLight: '#FFFFFF',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+        document.getElementById('qrBloque').classList.add('activo');
+      } catch (e) { /* sin QR: el botón sigue funcionando */ }
+    }
+  } else {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.getElementById('instalar').scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  var req = 'Aún no está disponible para iPhone.';
+  document.getElementById('requisitos').textContent = c.androidMinimo
+    ? 'Requiere Android ' + c.androidMinimo + ' o superior. ' + req
+    : 'Por ahora solo para Android. ' + req;
+
+  if (c.avisoPrivacidadUrl) {
+    var a1 = document.getElementById('avisoEnlace');
+    a1.querySelector('a').href = c.avisoPrivacidadUrl; a1.hidden = false;
+    var a2 = document.getElementById('pieAviso');
+    a2.href = c.avisoPrivacidadUrl; a2.hidden = false;
+  }
+  if (c.correoContacto) {
+    var a3 = document.getElementById('pieContacto');
+    a3.href = 'mailto:' + c.correoContacto; a3.hidden = false;
+  }
+})();
+</script>
+</body>
+</html>
